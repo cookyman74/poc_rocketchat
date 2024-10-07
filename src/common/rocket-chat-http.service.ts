@@ -57,4 +57,40 @@ export class RocketChatHttpService {
       throw new Error(`Unable to complete GET request to ${url}`);
     }
   }
+
+  // PUT 요청
+  async put<T>(endpoint: string, body: any) {
+    const url = `${this.baseUrl}${endpoint}`;
+    const headers = this.getHeaders();
+
+    try {
+      const response = await firstValueFrom(
+        this.httpService.put(url, body, { headers }),
+      );
+      return response.data;
+    } catch (error) {
+      this.logger.error(`Error making PUT request to ${url}`, error);
+      if (error.response) {
+        this.logger.error(`Response data: ${JSON.stringify(error.response.data)}`);
+        this.logger.error(`Request body: ${JSON.stringify(body)}`);
+      }
+      throw new Error(`Unable to complete PUT request to ${url}`);
+    }
+  }
+
+  // DELETE 요청
+  async delete<T>(endpoint: string) {
+    const url = `${this.baseUrl}${endpoint}`;
+    const headers = this.getHeaders();
+
+    try {
+      const response = await firstValueFrom(
+        this.httpService.delete(url, { headers }),
+      );
+      return response.data;
+    } catch (error) {
+      this.logger.error(`Error making DELETE request to ${url}`, error);
+      throw new Error(`Unable to complete DELETE request to ${url}`);
+    }
+  }
 }

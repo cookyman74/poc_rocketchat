@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Test</title>
+</head>
+<body>
+    <h1>WebSocket Client Test</h1>
+    <div>
+        <textarea id="messages" rows="10" cols="50" readonly></textarea>
+    </div>
+    <div>
+        <input type="text" id="messageInput" placeholder="Enter message">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+    
+    <script>
+        // WebSocket 연결: 포트 4000 사용
+        const socket = new WebSocket('ws://localhost:4000');  // 서버 주소 포트 4000
+
+        socket.onopen = function () {
+            console.log('WebSocket connection established.');
+            addMessage("Connected to WebSocket server.");
+        };
+
+        socket.onmessage = function (event) {
+            console.log('Received message:', event.data);
+            addMessage(`Received: ${event.data}`);
+        };
+
+        socket.onclose = function (event) {
+            console.log('Connection closed:', event);
+            addMessage("Connection closed.");
+        };
+
+        socket.onerror = function (error) {
+            console.error('WebSocket error:', error);
+            addMessage(`Error: ${error.message}`);
+        };
+
+        function sendMessage() {
+            const message = document.getElementById('messageInput').value;
+            if (message && socket.readyState === WebSocket.OPEN) {
+                socket.send(message);
+                addMessage(`Sent: ${message}`);
+            }
+        }
+
+        function addMessage(message) {
+            const messagesTextArea = document.getElementById('messages');
+            messagesTextArea.value += message + "\n";
+        }
+    </script>
+</body>
+</html>
+
